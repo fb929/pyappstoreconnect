@@ -102,10 +102,7 @@ for response in responses:
         self.scnt = None
         # persistent session cookie {{
         self.sessionCacheFile = self.cacheDirPath +'/sessionCacheFile.txt'
-        if os.path.exists(self.sessionCacheFile) and os.path.getsize(self.sessionCacheFile) > 0:
-            with open(self.sessionCacheFile, 'rb') as f:
-                cookies = pickle.load(f)
-                self.session.cookies.update(cookies)
+        self.getSession()
         # }}
 
         self.apiSettingsAll = None
@@ -253,6 +250,12 @@ for response in responses:
             return True
         else:
             return False
+
+    def getSession(self):
+        if os.path.exists(self.sessionCacheFile) and os.path.getsize(self.sessionCacheFile) > 0:
+            with open(self.sessionCacheFile, 'rb') as f:
+                cookies = pickle.load(f)
+                self.session.cookies.update(cookies)
 
     def storeSession(self):
         headers = self.appleSessionHeaders()
