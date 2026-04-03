@@ -2,9 +2,8 @@ name: Publish PyPI
 
 on:
   push:
-    # Sequence of patterns matched against refs/tags
     tags:
-      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+      - 'v*.*.*'
 
 permissions: write-all
 
@@ -14,26 +13,33 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
+
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.x"
+
       - name: Install pypa/build
         run: python3 -m pip install build --user
+
       - name: get release version
         id: release-version
         run: |
           echo "$GITHUB_REF_NAME" | sed 's|^[a-zA-Z]\+|RELEASE_VERSION=|; s|-|_|g' >> $GITHUB_OUTPUT
+
       - name: edit version in pyproject.toml
         run: sed -i 's|^version = .*|version = "${{ steps.release-version.outputs.RELEASE_VERSION }}"|' pyproject.toml
+
       - name: Build a binary wheel and a source tarball
         run: python3 -m build
+
       - name: Store the distribution packages
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v7
         with:
           name: python-package-distributions
           path: dist/
+
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
@@ -41,6 +47,7 @@ jobs:
           fail_on_unmatched_files: true
           files: 'dist/*'
           token: ${{ secrets.GITHUB_TOKEN }}
+
 
   publish-to-pypi:
     name: Publish Python distribution to PyPI
@@ -57,10 +64,11 @@ jobs:
 
     steps:
       - name: Download all the dists
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v8
         with:
           name: python-package-distributions
           path: dist/
+
       - name: Publish distribution to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
