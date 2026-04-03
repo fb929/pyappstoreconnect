@@ -24,7 +24,9 @@ class MetricsWithGroupMixin:
             # get available dimensions id for metrics {{
             self.logger.debug(f"{defName}: metric={metric}")
             for measure in self.apiSettingsAll['measures']:
-                if measure['key'] == metric or measure['title'] == metric:
+                self.logger.debug(f"{defName}: measure={measure}")
+                title = measure.get('title') or measure.get('titleLocKey')
+                if measure.get('key') == metric or title == metric:
                     availableDimensionsIds = measure['dimensions']
                     self.logger.debug(f"{defName}: metric={metric}, available dimensions={availableDimensionsIds}")
             # }}
