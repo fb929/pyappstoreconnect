@@ -184,7 +184,7 @@ for response in responses:
 
         r = self.session.get("https://idmsa.apple.com/appleauth/auth", headers=headers)
         self.logger.debug(f"def={defName}: response.status_code={r.status_code}")
-        if r.status_code == 201:
+        if r.status_code == 201 or r.status_code == 423: # 201 - ok; 423 - warning (Too many verification codes have been sent)
             # success
             try:
                 data = r.json()
@@ -202,7 +202,7 @@ for response in responses:
                 raise Exception(f"Although response from Apple indicated activated Two-step Verification or Two-factor Authentication, we didn't know how to handle this response: #{r.text}")
 
         else:
-            raise Exception(f"def={defName}: bad response.status_code={r.status_code}")
+            raise Exception(f"def={defName}: bad response.status_code='{r.status_code}', text='{r.text}'")
 
         return
 
