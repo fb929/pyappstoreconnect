@@ -14,7 +14,6 @@ logger = logging.getLogger(__name__)
 
 # init appstore connect client
 client = pyappstoreconnect.Client(
-    requestsRetry=False,
     userAgent='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
     logLevel='debug',
 )
@@ -40,6 +39,7 @@ def login():
         logger.info(f"login success")
     else:
         logger.error(f"login failed")
+        print(response)
         exit(1)
 
 

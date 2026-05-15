@@ -32,19 +32,19 @@ class TimeSeriesAnalyticsMixin:
 
         # check status_code
         if response.status_code != 200:
-            self.logger.error(f"{defName}: status_code={response.status_code}, payload={payload}, response.text={response.text}")
+            self.logger.error(f"{defName}: status_code='{response.status_code}', payload='{payload}', response.text='{response.text}'")
             return False
 
         # check json data
         try:
             data = response.json()
         except Exception as e:
-            self.logger.error(f"{defName}: failed get response.json(), error={str(e)}")
+            self.logger.error(f"{defName}: failed get response.json(), error='{str(e)}'")
             return None
 
         # check results
         if 'results' not in data:
-            self.logger.error(f"{defName}: 'results' not found in response.json()={data}")
+            self.logger.error(f"{defName}: 'results' not found in response.json()='{data}'")
             return False
 
         return data

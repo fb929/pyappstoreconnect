@@ -1,4 +1,5 @@
 import inspect
+import json
 
 class MetricsWithGroupMixin:
     def metricsWithGroups(self, appleId, metrics=list(), groups=list(), days=7, startTime=None, endTime=None, frequency='week'):
@@ -23,7 +24,11 @@ class MetricsWithGroupMixin:
         for metric in metrics:
             # get available dimensions id for metrics {{
             self.logger.debug(f"{defName}: metric={metric}")
-            for measure in self.apiSettingsAll['measures']:
+            try:
+                measures = self.apiSettingsAll.get('measures')
+            except Exception as e:
+                raise Exception(f"{defName}: failed to get 'measures' from apiSettingsAll, error={str(e)}, apiSettingsAll dump: {json.dumps(self.apiSettingsAll, indent=2)}")
+            for measure in measures:
                 self.logger.debug(f"{defName}: measure={measure}")
                 title = measure.get('title') or measure.get('titleLocKey')
                 if measure.get('key') == metric or title == metric:
@@ -31,7 +36,8 @@ class MetricsWithGroupMixin:
                     self.logger.debug(f"{defName}: metric={metric}, available dimensions={availableDimensionsIds}")
             # }}
             for group in groups:
-                for dimension in self.apiSettingsAll['dimensions']:
+                dimensions = self.apiSettingsAll.get('dimensions')
+                for dimension in dimensions:
                     if dimension['key'] == group:
                         if dimension['id'] in availableDimensionsIds:
                             self.logger.debug(f"{defName}: group={group}, available option dimension['title']={dimension['title']}")
